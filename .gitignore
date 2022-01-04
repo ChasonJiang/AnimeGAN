@@ -1,0 +1,6 @@
+/.vscode
+/MNIST
+/checkpoint
+/data
+/dataloader
+/output
