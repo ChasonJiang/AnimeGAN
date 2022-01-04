@@ -25,7 +25,7 @@ NUM_CRITIC = 1
 MODELS_DIR=os.path.join("./checkpoint")
 OUT_DIR = os.path.join("./output")
 IMG_SAVE_FREQ = 1
-LOAD_MODELS = False
+LOAD_MODELS = True
 
 if not(os.path.exists(MODELS_DIR)):
     os.makedirs(MODELS_DIR)
@@ -97,7 +97,7 @@ class Trainer():
 
         if((bid+1)%int(self.num_batch/IMG_SAVE_FREQ) == 0):
             noise = torch.randn(BATCH_SIZE,VECTOR_LENGTH,1,1).to(self.device)
-            self.save_image(self.G(noise.unsqueeze(0)).squeeze(0).detach().cpu(),os.path.join(OUT_DIR,"epoch_{}_batch_{}.jpg".format(eid+1,bid+1)))
+            self.save_image(self.G(noise).detach().cpu(),os.path.join(OUT_DIR,"epoch_{}_batch_{}.jpg".format(eid+1,bid+1)))
         
         duration = time.time() - before_op_time
         samples_per_sec = BATCH_SIZE / duration
@@ -132,8 +132,8 @@ class Trainer():
         return G_loss
 
     def compute_discriminator_loss(self,real_logits,fake_logits):
-        # return F.relu(1 - real_logits).mean() + F.relu(1 + fake_logits).mean()
-        return -torch.mean(real_logits)+torch.mean(fake_logits)
+        return F.relu(1 - real_logits).mean() + F.relu(1 + fake_logits).mean()
+        # return -torch.mean(real_logits)+torch.mean(fake_logits)
 
     def compute_generator_loss(self,fake_logits):
         return -torch.mean(fake_logits)
